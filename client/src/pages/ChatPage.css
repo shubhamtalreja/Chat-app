@@ -1,0 +1,44 @@
+/* client/src/pages/ChatPage.css */
+
+.chat-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding: 20px;
+}
+
+.chat-container {
+  display: flex; /* This is the key to our column layout! */
+  width: 100%;
+  max-width: 1200px;
+  height: 90vh; /* Use a percentage of the viewport height. */
+  max-height: 800px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  overflow: hidden; /* Hide anything that spills out of the rounded corners. */
+}
+
+/* The sidebar containing the room name and user list. */
+.sidebar {
+  flex: 0 0 250px; /* Do not grow, do not shrink, have a base width of 250px. */
+  background: #f7f7f7;
+  border-right: 1px solid #e0e0e0;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column; /* Stack items vertically. */
+}
+
+.sidebar h3 {
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+/* The main area for messages and the input form. */
+.chat-main {
+  flex-grow: 1; /* This makes the main area take up all remaining space. */
+  display: flex;
+  flex-direction: column; /* Stack the message list and input form vertically. */
+}

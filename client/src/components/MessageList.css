@@ -1,0 +1,32 @@
+/* client/src/components/MessageList.css */
+
+.message-list {
+  flex-grow: 1; /* This is CRUCIAL. It makes the message list fill the available space. */
+  padding: 1.5rem;
+  overflow-y: auto; /* Show a scrollbar only when the content overflows vertically. */
+}
+
+.message {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.message-header {
+  margin-bottom: 0.25rem;
+}
+
+.message-author {
+  font-weight: 700;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.message-text {
+  background: #e9e9eb;
+  padding: 0.75rem;
+  border-radius: 12px;
+  max-width: 70%;
+  word-wrap: break-word; /* Ensure long words don't break the layout. */
+  align-self: flex-start; /* Default alignment for messages. */
+}
