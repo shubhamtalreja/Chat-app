@@ -1,0 +1,22 @@
+/* client/src/components/UserList.css */
+
+.user-list {
+  flex-grow: 1; /* Allow the list to fill the sidebar's vertical space. */
+}
+
+.user-list h3 {
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 0.75rem;
+}
+
+.user-list ul {
+  list-style-type: none; /* Remove the default bullet points. */
+}
+
+.user-list li {
+  padding: 0.5rem 0;
+  color: #555;
+  font-weight: 500;
+  border-bottom: 1px solid #eee;
+}

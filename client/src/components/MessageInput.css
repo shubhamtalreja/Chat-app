@@ -1,0 +1,37 @@
+/* client/src/components/MessageInput.css */
+
+.message-form {
+  display: flex; /* Align input and button side-by-side. */
+  padding: 1rem;
+  border-top: 1px solid #e0e0e0;
+  background: #f7f7f7;
+}
+
+.message-input {
+  flex-grow: 1; /* The input field takes up all available space. */
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  margin-right: 0.5rem;
+}
+
+.message-input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.send-button {
+  border: none;
+  background-color: #007bff;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.send-button:hover {
+  background-color: #0056b3;
+}
