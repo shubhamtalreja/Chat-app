@@ -25,9 +25,24 @@ io.on('connection', (socket) => {
         socket.join(room);
 
         users.set(socket.id, { username, room });
-        
+
         console.log(`${username} joined room: ${room}`);
+
+        socket.emit('message', {
+            user: 'Admin',
+            text: `Welcome to the room, ${username}!`
+        });
+
+        socket.broadcast.to(room).emit('message', {
+            user: 'Admin',
+            text: `${username} has joined the room!`
+        });
     });
+
+    socket.on('sendMessage', (message) => {
+        const user = users.get(socket.id);
+        console.log(`Message from ${user.username} in room ${user.room}: ${message}`);
+    })
 
     socket.on('disconnect', () => {
 
@@ -35,7 +50,11 @@ io.on('connection', (socket) => {
             const { username, room } = users.get(socket.id);
             console.log(`${username} left room: ${room}`);
             users.delete(socket.id);
-            console.log(`User disconnected: ${socket.id}`);
+
+            socket.broadcast.to(room).emit('message', {
+                user: 'Admin',
+                text: `${username} has left the room.`
+            });
 
         } else {
             // This case might happen if a user connects but never 'joins' a room.
