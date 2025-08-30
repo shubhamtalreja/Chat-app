@@ -22,7 +22,7 @@ const MessageInput = () => {
                 className="message-input"
                 placeholder="Type your message..."
                 value={message}
-                onChange={setMessage(e.target.value)}
+                onChange={(e) => setMessage(e.target.value)}
             />
             <button type="submit" className="send-button">
                 Send

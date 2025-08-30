@@ -40,8 +40,18 @@ io.on('connection', (socket) => {
     });
 
     socket.on('sendMessage', (message) => {
-        const user = users.get(socket.id);
-        console.log(`Message from ${user.username} in room ${user.room}: ${message}`);
+        if (users.has(socket.id)) {
+            const user = users.get(socket.id);
+            io.to(user.room).emit('newMessage', {
+                user: user.username,
+                text: message
+            });
+            console.log(`Message from ${user.username} with ${socket.id} in room ${user.room}: ${message}`);
+        } else {
+            console.log(`Received message from an unknown user: ${socket.id}`);
+
+        }
+
     })
 
     socket.on('disconnect', () => {
