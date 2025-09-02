@@ -18,6 +18,16 @@ server.listen(process.env.PORT, () => {
     console.log(`Server is running on port ${process.env.PORT}`);
 });
 
+const getRoomUsers = (room) => {
+    const roomUsers = [];
+    users.forEach((value, key) => {
+        if (value.room === room) {
+            roomUsers.push({ id: key, username: value.username });
+        }
+    });
+    return roomUsers;
+}
+
 io.on('connection', (socket) => {
     console.log(`User connected: ${socket.id}`);
 
@@ -25,8 +35,6 @@ io.on('connection', (socket) => {
         socket.join(room);
 
         users.set(socket.id, { username, room });
-
-        console.log(`${username} joined room: ${room}`);
 
         socket.emit('message', {
             user: 'Admin',
@@ -37,7 +45,15 @@ io.on('connection', (socket) => {
             user: 'Admin',
             text: `${username} has joined the room!`
         });
+
+        io.to(room).emit('roomData', {
+            room: room,
+            users: getRoomUsers(room)
+        });
+        console.log(`Sent updated user list for room \"${room}\" to all clients.`);
     });
+
+
 
     socket.on('sendMessage', (message) => {
         if (users.has(socket.id)) {
@@ -59,12 +75,20 @@ io.on('connection', (socket) => {
         if (users.has(socket.id)) {
             const { username, room } = users.get(socket.id);
             console.log(`${username} left room: ${room}`);
-            users.delete(socket.id);
 
             socket.broadcast.to(room).emit('message', {
                 user: 'Admin',
                 text: `${username} has left the room.`
             });
+            users.delete(socket.id);
+
+            const updatedUsers = getRoomUsers(room);
+            io.to(room).emit('roomData', {
+                room: room,
+                users: updatedUsers
+            });
+
+            console.log(`Sent updated user list for room "${room}" after user disconnect.`);
 
         } else {
             // This case might happen if a user connects but never 'joins' a room.
