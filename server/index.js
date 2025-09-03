@@ -3,9 +3,12 @@ const express = require('express');
 const app = express();
 const { Server } = require('socket.io');
 const http = require('http');
+const connectDb = require('./config/db');
+const Message = require('./models/Message');
 
 const server = http.createServer(app);
 const users = new Map();
+connectDb();
 
 const io = new Server(server, {
 
@@ -55,13 +58,31 @@ io.on('connection', (socket) => {
 
 
 
-    socket.on('sendMessage', (message) => {
+    socket.on('sendMessage', async(message) => {
         if (users.has(socket.id)) {
             const user = users.get(socket.id);
             io.to(user.room).emit('newMessage', {
                 user: user.username,
                 text: message
             });
+
+            try {
+                const newMessage = new Message({
+                    author: user.username,
+                    text: message,
+                    room: user.room
+                });
+
+                await newMessage.save();
+                console.log('Message saved to database successfully.');
+
+            } catch (error) {
+                console.error('Error saving message to database:', error);
+
+            }
+
+
+
             console.log(`Message from ${user.username} with ${socket.id} in room ${user.room}: ${message}`);
         } else {
             console.log(`Received message from an unknown user: ${socket.id}`);
