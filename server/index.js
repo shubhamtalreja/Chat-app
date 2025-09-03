@@ -18,6 +18,16 @@ server.listen(process.env.PORT, () => {
     console.log(`Server is running on port ${process.env.PORT}`);
 });
 
+const getRoomUsers = (room) => {
+    const roomUsers = [];
+    users.forEach((value, key) => {
+        if (value.room === room) {
+            roomUsers.push({ id: key, username: value.username });
+        }
+    });
+    return roomUsers;
+}
+
 io.on('connection', (socket) => {
     console.log(`User connected: ${socket.id}`);
 
@@ -25,17 +35,60 @@ io.on('connection', (socket) => {
         socket.join(room);
 
         users.set(socket.id, { username, room });
-        
-        console.log(`${username} joined room: ${room}`);
+
+        socket.emit('message', {
+            user: 'Admin',
+            text: `Welcome to the room, ${username}!`
+        });
+
+        socket.broadcast.to(room).emit('message', {
+            user: 'Admin',
+            text: `${username} has joined the room!`
+        });
+
+        io.to(room).emit('roomData', {
+            room: room,
+            users: getRoomUsers(room)
+        });
+        console.log(`Sent updated user list for room \"${room}\" to all clients.`);
     });
+
+
+
+    socket.on('sendMessage', (message) => {
+        if (users.has(socket.id)) {
+            const user = users.get(socket.id);
+            io.to(user.room).emit('newMessage', {
+                user: user.username,
+                text: message
+            });
+            console.log(`Message from ${user.username} with ${socket.id} in room ${user.room}: ${message}`);
+        } else {
+            console.log(`Received message from an unknown user: ${socket.id}`);
+
+        }
+
+    })
 
     socket.on('disconnect', () => {
 
         if (users.has(socket.id)) {
             const { username, room } = users.get(socket.id);
             console.log(`${username} left room: ${room}`);
+
+            socket.broadcast.to(room).emit('message', {
+                user: 'Admin',
+                text: `${username} has left the room.`
+            });
             users.delete(socket.id);
-            console.log(`User disconnected: ${socket.id}`);
+
+            const updatedUsers = getRoomUsers(room);
+            io.to(room).emit('roomData', {
+                room: room,
+                users: updatedUsers
+            });
+
+            console.log(`Sent updated user list for room "${room}" after user disconnect.`);
 
         } else {
             // This case might happen if a user connects but never 'joins' a room.

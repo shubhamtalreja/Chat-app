@@ -1,14 +1,14 @@
 import React from 'react'
 import './UserList.css';
 
-const UserList = () => {
-    const users = ['Alice', 'Bob', 'Charlie', 'You'];
+const UserList = ({ roomUsers }) => {
+
     return (
         <div className="user-list">
             <h3>Users Online</h3>
             <ul>
-                {users.map((user, index) => (
-                    <li key={index}>{user}</li>
+                {roomUsers?.map((user, index) => (
+                    <li key={index}>{user.username}</li>
                 ))}
             </ul>
         </div>

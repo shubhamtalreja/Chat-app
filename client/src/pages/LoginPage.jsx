@@ -1,14 +1,17 @@
 import React from 'react'
 import { socket } from '../socket';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
     const [username, setUsername] = React.useState('');
     const [room, setRoom] = React.useState('');
+    const navigate = useNavigate();
 
     const handleSubmit = (e) => {
         e.preventDefault();
         if (username.trim() && room.trim()) {
-            socket.emit('joinRoom', {username, room})
+            socket.emit('joinRoom', {username, room});
+            navigate('/chat');
         } else {
             console.log('Username and room are required.');
         }
