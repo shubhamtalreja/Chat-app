@@ -8,34 +8,46 @@ import { socket } from '../socket';
 
 const ChatPage = () => {
     const [messages, setMessages] = useState([]);
-    const [roomUsers, setRoomUsers] = useState();
+    const [users, setUsers] = useState();
+    const [room, setRoom] = useState();
 
-    useEffect(() =>{
+    useEffect(() => {
 
-        const messageListner = (message) =>{
+        const messageListner = (message) => {
             setMessages((prevMessages) => [...prevMessages, message]);
         }
 
-        const newMessageListener = (message) =>{
+        const newMessageListener = (message) => {
             setMessages((prevMessages) => [...prevMessages, message]);
         }
 
         const roomDataListener = ({ room, users }) => {
-            console.log(`Room: ${room}`);
-            console.log('Users in room:', users);
-            setRoomUsers(users);
+            setRoom(room);
+            setUsers(users);
         }
+
+        const loadHistoryListener = (history) => {
+            const formattedHistory = history.map(msg => ({
+                user: msg.author,
+                text: msg.text,
+            }));
+            console.log(history);
+            setMessages((prevMessages) => [...formattedHistory, ...prevMessages])
+        }
+
 
         socket.on('message', messageListner);
         socket.on('newMessage', newMessageListener);
         socket.on('roomData', roomDataListener);
+        socket.on('loadHistory', loadHistoryListener);
 
         return () => {
             socket.off('message', messageListner);
             socket.off('newMessage', newMessageListener);
             socket.off('roomData', roomDataListener);
+            socket.off('loadHistory', loadHistoryListener);
         }
-    },[])
+    }, [])
     return (
         <div className="chat-page">
 
@@ -43,13 +55,13 @@ const ChatPage = () => {
 
                 <div className="sidebar">
                     <h3>Room Name</h3>
-                 <UserList roomUsers={roomUsers}/>
+                    <UserList roomUsers={users} />
                 </div>
 
                 <div className="chat-main">
-                    <MessageList messages={messages}/>
-                 
-                   <MessageInput/>
+                    <MessageList messages={messages} />
+
+                    <MessageInput />
                 </div>
 
             </div>

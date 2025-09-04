@@ -34,10 +34,23 @@ const getRoomUsers = (room) => {
 io.on('connection', (socket) => {
     console.log(`User connected: ${socket.id}`);
 
-    socket.on('joinRoom', ({ username, room }) => {
+    socket.on('joinRoom', async ({ username, room }) => {
         socket.join(room);
 
         users.set(socket.id, { username, room });
+
+        try {
+            const chatHistory = await Message.find({ room: room }).sort({ timeStamp: 1 });
+            console.log(`Found ${chatHistory.length} messages for room "${room}".`);
+            socket.emit('loadHistory', chatHistory);
+            console.log(`Sent chat history to user ${username} (${socket.id})`);
+
+
+        } catch (error) {
+            console.error('Error fetching chat history:', error);
+
+        }
+
 
         socket.emit('message', {
             user: 'Admin',
@@ -58,7 +71,7 @@ io.on('connection', (socket) => {
 
 
 
-    socket.on('sendMessage', async(message) => {
+    socket.on('sendMessage', async (message) => {
         if (users.has(socket.id)) {
             const user = users.get(socket.id);
             io.to(user.room).emit('newMessage', {
