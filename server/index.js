@@ -102,6 +102,10 @@ io.on('connection', (socket) => {
 
         }
 
+    });
+
+    socket.on('typing', ()=>{
+        console.log('typing event....')
     })
 
     socket.on('disconnect', () => {

@@ -8,8 +8,8 @@ import { socket } from '../socket';
 
 const ChatPage = () => {
     const [messages, setMessages] = useState([]);
-    const [users, setUsers] = useState();
-    const [room, setRoom] = useState();
+    const [users, setUsers] = useState([]);
+    const [room, setRoom] = useState("");
 
     useEffect(() => {
 
@@ -54,7 +54,7 @@ const ChatPage = () => {
             <div className="chat-container">
 
                 <div className="sidebar">
-                    <h3>Room Name</h3>
+                    <h3>{room}</h3>
                     <UserList roomUsers={users} />
                 </div>
 
