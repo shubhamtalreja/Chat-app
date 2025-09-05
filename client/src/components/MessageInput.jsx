@@ -15,6 +15,11 @@ const MessageInput = () => {
         }
     }
 
+    const handleInputChange = (e) => {
+        setMessage(e.target.value);
+        socket.emit('typing');
+    }
+
     return (
         <form className="message-form" onSubmit={handleSendMessage}>
             <input
@@ -22,7 +27,7 @@ const MessageInput = () => {
                 className="message-input"
                 placeholder="Type your message..."
                 value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                onChange={handleInputChange}
             />
             <button type="submit" className="send-button">
                 Send
