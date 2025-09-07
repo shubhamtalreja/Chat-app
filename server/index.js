@@ -104,8 +104,14 @@ io.on('connection', (socket) => {
 
     });
 
-    socket.on('typing', ()=>{
-        console.log('typing event....')
+    socket.on('typing', () => {
+
+        if (users.has(socket.id)) {
+            const user = users.get(socket.id);
+            socket.broadcast.to(user.room).emit('userTyping',
+                { username: user.username }
+            );
+        }
     })
 
     socket.on('disconnect', () => {

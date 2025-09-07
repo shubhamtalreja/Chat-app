@@ -34,18 +34,23 @@ const ChatPage = () => {
             console.log(history);
             setMessages((prevMessages) => [...formattedHistory, ...prevMessages])
         }
+        const userTypingListener = ({ username }) => {
+            console.log(`${username} is typing...`);
+        }
 
 
         socket.on('message', messageListner);
         socket.on('newMessage', newMessageListener);
         socket.on('roomData', roomDataListener);
         socket.on('loadHistory', loadHistoryListener);
+        socket.on('userTyping', userTypingListener);
 
         return () => {
             socket.off('message', messageListner);
             socket.off('newMessage', newMessageListener);
             socket.off('roomData', roomDataListener);
             socket.off('loadHistory', loadHistoryListener);
+            socket.off('userTyping', userTypingListener);
         }
     }, [])
     return (
