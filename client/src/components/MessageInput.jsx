@@ -20,6 +20,10 @@ const MessageInput = () => {
         socket.emit('typing');
     }
 
+    const handleBlur = () => {
+        socket.emit('stopTyping');
+    };
+
     return (
         <form className="message-form" onSubmit={handleSendMessage}>
             <input
@@ -28,6 +32,7 @@ const MessageInput = () => {
                 placeholder="Type your message..."
                 value={message}
                 onChange={handleInputChange}
+                onBlur={handleBlur}
             />
             <button type="submit" className="send-button">
                 Send

@@ -42,3 +42,11 @@
   display: flex;
   flex-direction: column; /* Stack the message list and input form vertically. */
 }
+
+.typing-indicator {
+  height: 20px; /* Gives it a little space */
+  padding: 0 1rem; /* Aligns with message padding */
+  font-style: italic;
+  color: #888;
+  font-size: 0.9em;
+}
