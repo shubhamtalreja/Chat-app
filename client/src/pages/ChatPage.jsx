@@ -10,6 +10,7 @@ import PrivateChatWindow from '../components/PrivateChatWindow';
 const ChatPage = () => {
     const [messages, setMessages] = useState([]);
     const [users, setUsers] = useState([]);
+    const [privateMessages, setPrivateMessages] = useState({});
     const [room, setRoom] = useState("");
     const [typingUser, setTypingUser] = useState();
     const userTypingTimeoutRef = useRef(null);
@@ -21,8 +22,9 @@ const ChatPage = () => {
             setMessages((prevMessages) => [...prevMessages, message]);
         }
 
-        const newMessageListener = (message) => {
-            setMessages((prevMessages) => [...prevMessages, message]);
+        const newMessageListener = (newMessage) => {
+            const formattedMessage = { user: newMessage, text: newMessage.text };
+            setMessages((prevMessages) => [...prevMessages, formattedMessage]);
         }
 
         const roomDataListener = ({ room, users }) => {
@@ -35,7 +37,6 @@ const ChatPage = () => {
                 user: msg.author,
                 text: msg.text,
             }));
-            console.log(history);
             setMessages((prevMessages) => [...formattedHistory, ...prevMessages])
         }
         const userTypingListener = ({ username }) => {
@@ -57,6 +58,18 @@ const ChatPage = () => {
                 }
             }
         };
+        const newPrivateMessageListener = (message) => {
+            const otherUserId = socket.id === message.sender.id ? message.recipient.id : message.sender.id;
+
+            setPrivateMessages(prev => {
+                const existingMessages = prev[otherUserId] || [];
+
+                return {
+                    ...prev,
+                    [otherUserId]: [...existingMessages, message]
+                };
+            });
+        };
 
 
         socket.on('message', messageListner);
@@ -65,6 +78,7 @@ const ChatPage = () => {
         socket.on('loadHistory', loadHistoryListener);
         socket.on('userTyping', userTypingListener);
         socket.on('userStoppedTyping', userStoppedTypingListener);
+        socket.on('newPrivateMessage', newPrivateMessageListener);
 
         return () => {
             socket.off('message', messageListner);
@@ -73,6 +87,7 @@ const ChatPage = () => {
             socket.off('loadHistory', loadHistoryListener);
             socket.off('userTyping', userTypingListener);
             socket.off('userStoppedTyping', userStoppedTypingListener);
+            socket.off('newPrivateMessage', newPrivateMessageListener);
             if (userTypingTimeoutRef.current) {
                 clearTimeout(userTypingTimeoutRef.current);
             }
@@ -89,6 +104,9 @@ const ChatPage = () => {
     const handleClosePrivateChat = () => {
         setPrivateChatTarget(null);
     };
+    const messagesForPrivateChat = privateChatTarget 
+    ? privateMessages[privateChatTarget.id] || [] 
+    : [];
     return (
         <div className="chat-page">
 
@@ -114,6 +132,7 @@ const ChatPage = () => {
                 <PrivateChatWindow
                     targetUser={privateChatTarget}
                     onClose={handleClosePrivateChat}
+                    messages={messagesForPrivateChat}
                 />
             )}
         </div>

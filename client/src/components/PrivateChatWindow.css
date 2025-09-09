@@ -1,16 +1,15 @@
-/* client/src/components/PrivateChatWindow.css */
 
 .private-chat-overlay {
-  position: fixed; /* Position relative to the viewport */
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* Ensure it's on top of everything else */
+  z-index: 1000;
 }
 
 .private-chat-window {
@@ -77,4 +76,63 @@
   border-radius: 20px;
   padding: 0.5rem 1.5rem;
   cursor: pointer;
+}
+
+.private-chat-messages {
+  flex-grow: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  background-color: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+}
+
+.private-chat-messages ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.my-private-message, .their-private-message {
+  margin-bottom: 10px;
+  display: flex;
+}
+
+.my-private-message .message-content, .their-private-message .message-content {
+  padding: 10px 15px;
+  border-radius: 20px;
+  max-width: 75%;
+  word-wrap: break-word;
+}
+
+.my-private-message {
+  justify-content: flex-end;
+}
+
+.my-private-message .message-content {
+  background-color: #007bff;
+  color: white;
+  border-bottom-right-radius: 5px;
+}
+
+.their-private-message {
+  justify-content: flex-start;
+}
+
+.their-private-message .message-content {
+  background-color: #e9e9eb;
+  color: #333;
+  border-bottom-left-radius: 5px; 
+}
+
+.private-message-timestamp {
+  display: block;
+  font-size: 0.7em;
+  text-align: right;
+  margin-top: 5px;
+  color: rgba(255, 255, 255, 0.7); 
+}
+
+.their-private-message .private-message-timestamp {
+  color: #888;
 }

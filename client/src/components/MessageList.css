@@ -30,3 +30,67 @@
   word-wrap: break-word; /* Ensure long words don't break the layout. */
   align-self: flex-start; /* Default alignment for messages. */
 }
+
+.message-timestamp {
+  font-size: 0.75em;
+  color: #999;
+  margin-left: 10px;
+}
+
+.message-item {
+  display: flex; /* Establishes a flex container for alignment */
+  margin-bottom: 12px;
+}
+
+.message-content {
+  padding: 10px 15px;
+  border-radius: 20px;
+  max-width: 70%;
+  word-wrap: break-word; /* Ensures long words don't overflow */
+}
+
+.message-author {
+  font-weight: bold;
+  font-size: 0.85em;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+.message-text {
+  font-size: 1em;
+  line-height: 1.4;
+}
+
+.message-timestamp {
+  font-size: 0.75em;
+  color: #999;
+  text-align: right;
+  margin-top: 5px;
+}
+
+/* --- Styles for messages sent by the current user --- */
+.my-message {
+  justify-content: flex-end; /* Aligns the message bubble to the right */
+}
+
+.my-message .message-content {
+  background-color: #007bff;
+  color: white;
+  border-bottom-right-radius: 5px; /* Creates the "tailed" bubble effect */
+}
+
+/* Timestamps in my messages should be a lighter shade of white */
+.my-message .message-timestamp {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* --- Styles for messages sent by other users --- */
+.their-message {
+  justify-content: flex-start; /* Aligns the message bubble to the left */
+}
+
+.their-message .message-content {
+  background-color: #e9e9eb;
+  color: #333;
+  border-bottom-left-radius: 5px; /* Creates the "tailed" bubble effect */
+}
