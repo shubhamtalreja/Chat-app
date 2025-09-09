@@ -1,22 +1,44 @@
-/* client/src/components/UserList.css */
+.user-list-container {
+  padding: 10px;
+  background-color: #f7f7f7;
+  border-right: 1px solid #ddd;
+  height: 100%;
+}
+
+.user-list-container h4 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
 
 .user-list {
-  flex-grow: 1; /* Allow the list to fill the sidebar's vertical space. */
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
 }
 
-.user-list h3 {
-  font-size: 1.1rem;
-  color: #333;
-  margin-bottom: 0.75rem;
+.user-list-item {
+  margin-bottom: 8px;
 }
 
-.user-list ul {
-  list-style-type: none; /* Remove the default bullet points. */
+/* highlight-start */
+/* This is the key style to make our buttons look like plain text. */
+.user-button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit; /* Inherit font styles from parent */
+  color: #007bff; /* A typical link color */
+  cursor: pointer; /* Show a pointer on hover to indicate it's clickable */
+  text-align: left;
+  width: 100%;
 }
 
-.user-list li {
-  padding: 0.5rem 0;
-  color: #555;
-  font-weight: 500;
-  border-bottom: 1px solid #eee;
+.user-button:hover {
+  text-decoration: underline; /* Add an underline on hover for better UX */
+  color: #0056b3;
 }
+/* highlight-end */

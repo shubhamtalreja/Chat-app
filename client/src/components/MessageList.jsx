@@ -1,18 +1,40 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
+import { format } from 'date-fns';
+import { socket } from '../socket';
 import './MessageList.css';
 
-const MessageList = ( {messages} ) => {
+const MessageList = ({ messages }) => {
+  const messagesEndRef = useRef(null);
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   return (
-    <div className="message-list">
-      {messages.map((message, index) => (
-        <div key={index} className="message">
-          <div className="message-header">
-            <span className="message-author">{message.user}</span>
-          </div>
-          <p className="message-text">{message.text}</p>
-        </div>
-      ))}
+    <div className="message-list-container">
+      <ul className="message-list">
+        {messages.map((msg, index) => (
+          <li
+            key={msg.id || index}
+            className={`message-item ${msg?.sender?.id === socket.id ? 'my-message' : 'their-message'}`}
+          >
+            <div className="message-content">
+              {msg.sender?.id !== socket.id && (
+                <div className="message-author">{msg.sender.username}</div>
+              )}
+              <div className="message-text">{msg.text}</div>
+              {msg.timestamp && (
+                <div className="message-timestamp">
+                  {format(new Date(msg.timestamp), 'p')}
+                </div>
+              )}
+            </div>
+          </li>
+        ))}
+      </ul>
+      <div ref={messagesEndRef} />
     </div>
   );
 }

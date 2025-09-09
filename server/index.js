@@ -5,6 +5,7 @@ const { Server } = require('socket.io');
 const http = require('http');
 const connectDb = require('./config/db');
 const Message = require('./models/Message');
+const { timeStamp } = require('console');
 
 const server = http.createServer(app);
 const users = new Map();
@@ -74,19 +75,26 @@ io.on('connection', (socket) => {
     socket.on('sendMessage', async (message) => {
         if (users.has(socket.id)) {
             const user = users.get(socket.id);
-            io.to(user.room).emit('newMessage', {
-                user: user.username,
-                text: message
-            });
 
             try {
                 const newMessage = new Message({
                     author: user.username,
                     text: message,
-                    room: user.room
+                    room: user.room,
+                    timestamp: new Date()
                 });
 
                 await newMessage.save();
+                io.to(user.room).emit('newMessage', {
+                    id: newMessage._id,
+                    text: newMessage.text,
+                    sender: {
+                        id: socket.id,
+                        username: user.username,
+                    },
+                    room: user.room,
+                    timestamp: newMessage.timestamp,
+                });
                 console.log('Message saved to database successfully.');
 
             } catch (error) {
@@ -104,6 +112,30 @@ io.on('connection', (socket) => {
 
     });
 
+    socket.on('privateMessage', ({ recipientId, text }) => {
+
+        const sender = users.get(socket.id);
+
+        if (sender) {
+            const messagePayload = {
+                text: text,
+                sender: {
+                    id: socket.id,
+                    username: sender.username,
+                },
+                recipient: {
+                    id: recipientId
+                }
+            };
+
+            io.to(recipientId).emit('newPrivateMessage', messagePayload);
+            socket.emit('newPrivateMessage', messagePayload);
+
+        } else {
+            console.log(`Received private message from an unknown user: ${socket.id}`);
+        }
+    });
+
     socket.on('typing', () => {
 
         if (users.has(socket.id)) {
@@ -113,6 +145,16 @@ io.on('connection', (socket) => {
             );
         }
     })
+
+    socket.on('stopTyping', () => {
+        if (users.has(socket.id)) {
+            const user = users.get(socket.id);
+
+            socket.broadcast.to(user.room).emit('userStoppedTyping', {
+                username: user.username
+            });
+        }
+    });
 
     socket.on('disconnect', () => {
 
@@ -135,7 +177,6 @@ io.on('connection', (socket) => {
             console.log(`Sent updated user list for room "${room}" after user disconnect.`);
 
         } else {
-            // This case might happen if a user connects but never 'joins' a room.
             console.log(`User disconnected: ${socket.id} (was not in a room)`);
         }
     });
