@@ -9,6 +9,20 @@ This is a fullstack chat application built as a learning project to understand a
 - Message history
 - Simple and clean UI
 
+## App Pages
+
+### Login/Join Room Page
+![Login Page](client/public/login-room.png)
+Description: Users can log in or join a chat room.
+
+### Room / Group Chat Window
+![Group Chat](client/public/group-chat.png)
+Description: Users can chat in public rooms/groups.
+
+### Private Chat Window
+![Private Chat](client/public/private-chat.png)
+Description: Users can chat privately with other users.
+
 ## Technologies Used
 - **Frontend:** React, Vite
 - **Backend:** Node.js, Express
