@@ -1,70 +1,90 @@
-
-/* This container will center the form on the page. */
+/* Center the form both vertically and horizontally */
 .login-page {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* Make it take the full viewport height. */
+  height: 100vh;
   width: 100%;
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* This is the main "card" for our form. */
+/* Card container */
 .login-form-container {
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  padding: 2.5rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
   width: 100%;
-  max-width: 400px; /* Constrain the width for a nice look. */
+  max-width: 400px;
   text-align: center;
+  animation: fadeIn 0.6s ease-in-out;
 }
 
+/* Title */
 .login-form-container h2 {
   margin-bottom: 1.5rem;
-  color: #1a1a1a;
+  color: #333;
+  font-size: 1.8rem;
+  font-weight: 700;
 }
 
-/* A container for each label-input pair. */
+/* Label + Input spacing */
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
   text-align: left;
 }
 
 .form-group label {
-  display: block; /* Make the label take its own line. */
-  margin-bottom: 0.5rem;
+  display: block;
+  margin-bottom: 0.4rem;
   font-weight: 600;
-  color: #555;
+  color: #444;
+  font-size: 0.95rem;
 }
 
 .form-group input {
   width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 0.85rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
   font-size: 1rem;
+  transition: all 0.2s ease-in-out;
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  border-color: #2575fc;
+  box-shadow: 0 0 0 3px rgba(37, 117, 252, 0.25);
 }
 
-/* Style the submit button. */
+/* Button */
 form button {
   width: 100%;
-  padding: 0.75rem;
+  padding: 0.9rem;
   border: none;
-  border-radius: 4px;
-  background-color: #007bff;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
   color: white;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 form button:hover {
-  background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

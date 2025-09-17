@@ -1,10 +1,9 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react';
 import UserList from '../components/UserList';
 import MessageList from '../components/MessageList';
 import MessageInput from '../components/MessageInput';
-import { useEffect, useRef, useState } from 'react';
 import { socket } from '../socket';
-import './ChatPage.css'
+import './ChatPage.css';
 import PrivateChatWindow from '../components/PrivateChatWindow';
 
 const ChatPage = () => {
@@ -12,35 +11,49 @@ const ChatPage = () => {
     const [users, setUsers] = useState([]);
     const [privateMessages, setPrivateMessages] = useState({});
     const [room, setRoom] = useState("");
-    const [typingUser, setTypingUser] = useState();
+    const [typingUser, setTypingUser] = useState('');
     const userTypingTimeoutRef = useRef(null);
     const [privateChatTarget, setPrivateChatTarget] = useState(null);
 
     useEffect(() => {
-
-        const messageListner = (message) => {
-            setMessages((prevMessages) => [...prevMessages, message]);
-        }
+        const messageListener = (message) => {
+            const formattedMessage = {
+                id: Date.now(),
+                text: message.text,
+                sender: message.user === 'Admin'
+                    ? { id: 'admin', username: 'Admin' }
+                    : { id: socket.id, username: message.user },
+                timestamp: new Date(),
+            };
+            setMessages((prev) => [...prev, formattedMessage]);
+        };
 
         const newMessageListener = (newMessage) => {
-            const formattedMessage = { user: newMessage, text: newMessage.text };
-            setMessages((prevMessages) => [...prevMessages, formattedMessage]);
-        }
+            const formattedMessage = {
+                id: newMessage.id,
+                text: newMessage.text,
+                sender: newMessage.sender,
+                timestamp: newMessage.timestamp,
+            };
+            setMessages((prev) => [...prev, formattedMessage]);
+        };
 
         const roomDataListener = ({ room, users }) => {
             setRoom(room);
             setUsers(users);
-        }
+        };
 
         const loadHistoryListener = (history) => {
-            const formattedHistory = history.map(msg => ({
-                user: msg.author,
+            const formattedHistory = history.map((msg) => ({
+                id: msg._id,
                 text: msg.text,
+                sender: { username: msg.author },
+                timestamp: msg.timestamp,
             }));
-            setMessages((prevMessages) => [...formattedHistory, ...prevMessages])
-        }
-        const userTypingListener = ({ username }) => {
+            setMessages(formattedHistory);
+        };
 
+        const userTypingListener = ({ username }) => {
             if (userTypingTimeoutRef.current) {
                 clearTimeout(userTypingTimeoutRef.current);
             }
@@ -48,7 +61,7 @@ const ChatPage = () => {
             userTypingTimeoutRef.current = setTimeout(() => {
                 setTypingUser('');
             }, 1000);
-        }
+        };
 
         const userStoppedTypingListener = ({ username }) => {
             if (typingUser === username) {
@@ -58,21 +71,23 @@ const ChatPage = () => {
                 }
             }
         };
+
         const newPrivateMessageListener = (message) => {
-            const otherUserId = socket.id === message.sender.id ? message.recipient.id : message.sender.id;
+            const otherUserId =
+                socket.id === message.sender.id
+                    ? message.recipient.id
+                    : message.sender.id;
 
-            setPrivateMessages(prev => {
+            setPrivateMessages((prev) => {
                 const existingMessages = prev[otherUserId] || [];
-
                 return {
                     ...prev,
-                    [otherUserId]: [...existingMessages, message]
+                    [otherUserId]: [...existingMessages, message],
                 };
             });
         };
 
-
-        socket.on('message', messageListner);
+        socket.on('message', messageListener);
         socket.on('newMessage', newMessageListener);
         socket.on('roomData', roomDataListener);
         socket.on('loadHistory', loadHistoryListener);
@@ -81,7 +96,7 @@ const ChatPage = () => {
         socket.on('newPrivateMessage', newPrivateMessageListener);
 
         return () => {
-            socket.off('message', messageListner);
+            socket.off('message', messageListener);
             socket.off('newMessage', newMessageListener);
             socket.off('roomData', roomDataListener);
             socket.off('loadHistory', loadHistoryListener);
@@ -91,11 +106,11 @@ const ChatPage = () => {
             if (userTypingTimeoutRef.current) {
                 clearTimeout(userTypingTimeoutRef.current);
             }
-        }
+        };
     }, [typingUser]);
 
     const handleUserSelect = (user) => {
-        if (users.id !== socket.id) {
+        if (user.id !== socket.id) {
             setPrivateChatTarget(user);
             console.log(`Starting private chat with: ${user.username}`);
         }
@@ -104,14 +119,14 @@ const ChatPage = () => {
     const handleClosePrivateChat = () => {
         setPrivateChatTarget(null);
     };
-    const messagesForPrivateChat = privateChatTarget 
-    ? privateMessages[privateChatTarget.id] || [] 
-    : [];
+
+    const messagesForPrivateChat = privateChatTarget
+        ? privateMessages[privateChatTarget.id] || []
+        : [];
+
     return (
         <div className="chat-page">
-
             <div className="chat-container">
-
                 <div className="sidebar">
                     <h3>{room}</h3>
                     <UserList roomUsers={users} onUserSelect={handleUserSelect} />
@@ -126,7 +141,6 @@ const ChatPage = () => {
                     )}
                     <MessageInput />
                 </div>
-
             </div>
             {privateChatTarget && (
                 <PrivateChatWindow
@@ -137,6 +151,6 @@ const ChatPage = () => {
             )}
         </div>
     );
-}
+};
 
-export default ChatPage
+export default ChatPage;

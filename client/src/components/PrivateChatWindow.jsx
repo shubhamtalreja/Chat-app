@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react';
 import './PrivateChatWindow.css';
 import { socket } from '../socket';
+import { format } from 'date-fns'; // ✅ Added missing import
 
 const PrivateChatWindow = ({ targetUser, onClose, messages }) => {
-
     const [privateMessage, setPrivateMessage] = useState('');
     const messagesEndRef = useRef(null);
 
@@ -14,6 +14,7 @@ const PrivateChatWindow = ({ targetUser, onClose, messages }) => {
     useEffect(() => {
         scrollToBottom();
     }, [messages]);
+
     const handlePrivateMessageSubmit = (e) => {
         e.preventDefault();
         if (privateMessage.trim()) {
@@ -23,7 +24,8 @@ const PrivateChatWindow = ({ targetUser, onClose, messages }) => {
             });
             setPrivateMessage('');
         }
-    }
+    };
+
     return (
         <div className="private-chat-overlay">
             <div className="private-chat-window">
@@ -31,6 +33,7 @@ const PrivateChatWindow = ({ targetUser, onClose, messages }) => {
                     <h4>Chat with {targetUser.username}</h4>
                     <button className="close-button" onClick={onClose}>×</button>
                 </div>
+
                 <div className="private-chat-messages">
                     <ul>
                         {messages.map((msg, index) => (
@@ -50,8 +53,8 @@ const PrivateChatWindow = ({ targetUser, onClose, messages }) => {
                         ))}
                     </ul>
                     <div ref={messagesEndRef} />
-
                 </div>
+
                 <form className="private-chat-input" onSubmit={handlePrivateMessageSubmit}>
                     <input
                         type="text"
@@ -63,8 +66,8 @@ const PrivateChatWindow = ({ targetUser, onClose, messages }) => {
                     <button type="submit">Send</button>
                 </form>
             </div>
-        </div >
-    )
-}
+        </div>
+    );
+};
 
-export default PrivateChatWindow
+export default PrivateChatWindow;

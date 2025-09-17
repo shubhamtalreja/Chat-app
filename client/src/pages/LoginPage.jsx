@@ -1,6 +1,7 @@
 import React from 'react'
 import { socket } from '../socket';
 import { useNavigate } from 'react-router-dom';
+import './LoginPage.css'
 
 const LoginPage = () => {
     const [username, setUsername] = React.useState('');
